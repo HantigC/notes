@@ -35,4 +35,26 @@ caused by overfitting.
 
 ## Deep Residual Learning
 
+Instead of aproximating $H\left x \right$, the network should aproximate the
+residual mapping $F\left x \right = H\left x \right - x$. As stated in
+Introduction, a deeper model shouldn have no greater training error than it's
+shallower counterpart. If the identity mappings are optimal, the residual
+connection will drive the weights towards 0. Using residual connections it's
+easier to find small nudges than to find the whole function (The layer
+activation have smaller std Fig. 7). One example could be Fourier Transform.
 
+
+## identity mapping by shortcuts
+
+The building block is stated as follow:
+$$
+    y = F \left x , \{ W_i \} + x
+$$
+
+$x$ and $y$ being the input and output vectors. $ F \left  x , \{ W_i \} \right
+represents residul mapping. The are two cases when it comes to residual mappings.
+1. The input and output have the same dimensions. $ y = F \left x , \{ W_i \} + x $
+2. The input and output have different dimensions. $ y = F \left x , \{ W_i \} + W_s * x $
+
+The $x$ can be projected in the 1st equation too, but the experiments show that
+the identity mapping is enough.
