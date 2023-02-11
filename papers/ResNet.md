@@ -2,13 +2,12 @@
 
 [[arxiv](https://arxiv.org/pdf/1512.03385.pdf)]
 
-## Main Points
+## TLDR
+
 1. Plain networks display degradation - deeper networks have bigger trainig error
 2. It's easier to learn residual function than full functions -- Can be thought as a Fourier
 3. The layer activations have samller stndard deviations.
 4. Projection doesn't bring substantial increase in performace.
-
-
 
 ## Abstract
 

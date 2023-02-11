@@ -2,6 +2,11 @@
 
 [[link](https://papers.nips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf)]
 
+## TLDR
+1. CNN rchitecture for image classification.
+2. chieves best top-1 error (by a high margin)
+3. Uses ReLU, Dropout, and channel-wise normalization
+
 ## Architecture
 
 The architecture consists of five Convolutional Neural Networks and three Feed
@@ -34,3 +39,16 @@ will overlap.
 
 
 ## Reducing Overfitting
+### Data Augmentation
+1. Horizontal flips
+2. Random 224x224 from a 256x256 image
+3. Altering intensities of RBG using sampling along eigen values/vectors.
+
+### Dropout
+
+Using dropout in the first two fully-connected layers.
+
+## Qualitative Evaluations
+
+Similar images result in similar vector representations. Meanig that the cosine
+similarity between two vectors will be closer to 1.
