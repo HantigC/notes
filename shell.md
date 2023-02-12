@@ -5,5 +5,7 @@
 
 * Change the repeat rate on linux
     ```sh
-    xset r rate 190 35
+    xset r rate 300 50
     ```
+
+

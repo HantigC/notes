@@ -4,8 +4,11 @@
 
 ## TLDR
 1. CNN rchitecture for image classification.
-2. chieves best top-1 error (by a high margin)
-3. Uses ReLU, Dropout, and channel-wise normalization
+2. CNNs have 11x11, 5x5, 3x3  filters
+3. The network is split across two GPUs
+4. Achieves best top-1 error (by a high margin)
+5. Uses ReLU, Dropout, and channel-wise normalization
+6. The vectors extracted from similar images display high cosine similarity
 
 ## Architecture
 
