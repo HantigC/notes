@@ -2,9 +2,6 @@
 
 ## TBR
 
-### Network in Network
-[[link](https://arxiv.org/pdf/1312.4400.pdf)]
-
 ### Going deeper with convolutions
 [[link](https://arxiv.org/pdf/1409.4842.pdf)]
 

@@ -17,7 +17,7 @@ less prone to overfitting.
 The convolutional filter in CNN acts as a generalized linear model (GLM) for a
 specific patch, making the assumption that the patches are located in a linear
 separable space. NiN networks aim to overcome this linear assumption by adding
-MLP, which is a trainable non-linear function aproximators.
+MLP, which is a trainable non-linear function aproximator.
 
 Instead of using MLP for projecting the feature maps into the label space, the
 current architecture will use global average pooling layes.
