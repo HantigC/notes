@@ -2,9 +2,6 @@
 
 ## TBR
 
-### Going deeper with convolutions
-[[link](https://arxiv.org/pdf/1409.4842.pdf)]
-
 ### Rethinking the Inception Architecture for Computer Vision
 [[link](https://arxiv.org/pdf/1512.00567.pdf)]
 
