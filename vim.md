@@ -7,3 +7,8 @@
         set -g default-terminal "tmux-256color"
         set-option -sa terminal-overrides ',xterm:RGB'
         ```
+
+## number of occurences in a file
+```vim
+:%s/<pattern>//n
+```
