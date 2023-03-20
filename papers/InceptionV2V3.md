@@ -49,8 +49,8 @@ The inception V3 is constructed by using all the methods described above.
 
 Instead of maximazing the likelihood for a distribution that has the shape of
 dirac delta $q(k|x) = \delta_{k, y}$, the authors propose maximazing the
-likelihood for a smoothed dirac delta $q(k|x) = \epsilon * \delta_{k, y} +
-(1-\epsilon) * u(k)$.
+likelihood for a smoothed dirac delta 
+$q(k|x) = \epsilon * \delta_{k, y} + (1-\epsilon) * u(k)$.
 
 The goal is preventing the largerst logit to becom much larger than the other
 ones. This way the model is supposed to generalize better and to be less prone
