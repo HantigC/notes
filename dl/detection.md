@@ -14,5 +14,12 @@
 * FPN Neck
 * Regression head and Classification head
 
+The box prediction is made using anchors. The anchors are extracted for every FPN level.
+
 ![RetinaNet ARchitecture](imgs/RetinaNetArchitecture.png)
+
+### Loss Function
+$$FL(p_t) = - \alpha * (1 - p_t)^{\gamma}\log(p_t)$$
+
+If $p_t$ increases, the loss will decrease. This means that the correctly classified samples are discounted when it comes to loss computation.
 
