@@ -76,3 +76,18 @@ The architecture is a fully convolutional neural network. Instead of using only 
 SSD approach can be adapted to any other convolutional architecture.
 
 ![SSD Architecture](imgs/SSDArchitecture.png)
+## FPN
+* Leverages ConvNet's hierarchical nature in order to create a feature pyramid.
+* Combines low-resolution but semantically strong features with high-resolution but weak features via top-down pathway and lateral connections.
+* Create a feature pyramid with a small additional computation cost.
+* The architecture can be used for detection by attaching adequate heads. In the same way, it can be used for semantic segmentation
+
+
+### Architecture
+
+The architecture is backbone agnostic, it can be adapted to any other fully convolutional network. It consists of:
+* **Bottom-up pathway**: This is a forward computation of the backbone ConvNet.
+* **Top-down path**: Combines lower resolution but semantically stronger feature maps with higher resolution but semantically weaker feature maps. It is achieved by up sampling the deeper features maps and adding the shallower ones, making a lateral connection.
+
+
+![Feature Pyramid Network Architecture](imgs/FPNArchitecture.png)
