@@ -1,37 +1,4 @@
 # Structure from Motion
-## [DeepSFM: Structure From Motion Via Deep Bundle Adjustment](https://arxiv.org/pdf/1912.09697.pdf)
-## [HSfM: Hybrid Structure-from-Motion](https://openaccess.thecvf.com/content_cvpr_2017/papers/Cui_HSfM_Hybrid_Structure-from-Motion_CVPR_2017_paper.pdf)
-
-## [Pixel-Perfect Structure-from-Motion with Featuremetric Refinement](https://arxiv.org/pdf/2108.08291.pdf)
-## [FlowMap: High-Quality Camera Poses, Intrinsics, and Depth via Gradient Descent](https://arxiv.org/pdf/2404.15259)
-![](./imgs/FlowNetForward.png)
-### Supervision via Camera-Induced Scene Flow
-1. Unproject pixels $\bold{u}_i \in \mathbb{R}^2$ from image $I_{i}$ using depth map $D_{i}$ and intrinsic matrix $K_{i}^{-1}$, yielding a 3D point $x_{i}$
-2. Use relative camera pose $P{ij}$ between frames $i$ and $j$ to transform a point $x_{i}$ onto $x_{j}$, yielding an image an implied $\hat{\bold{u}}_{ij}$.
-3. Compare the computed correspondence $\hat{\bold{u}}_{ij}$ with a know correspondence $\bold{u}_{ij}$
-$$\mathcal{L} = ||\hat{\bold{u}}_{ij} - \bold{u}_{ij}||$$
-![](./imgs/FlowLoss.png)
-#### Supervision via Dense Optical Flow and Sparse Point Tracks
-> Use off-the-shelf point tracker
-1. Correspondences derived from two sources: frame by frame optical flow and sparse tracks.
-2. Correspondences flow optical flow $\bold{F}_{i}$: $\bold{u}_{ij} = \bold{u}_{i} + \bold{F}_{ij}\left[\bold{u}_{i}\right]$.
-
-### Parameterizing Depth, Pose, and Camera Intrinsics
-#### Depth Network.
-Use a pre-trained network that estimates depth
-#### Pose as a Function of Depth, Intrinsics and Optical Flow
-1. Unproject the pixels to create point clouds: $\bold{X}_{j}^{\leftrightarrow}$, $\bold{X}_{i}^{\leftrightarrow}$
-2. Use Procrustes formulation to solve the alignment. Use the flow correspondences
-
-$$\bold{P}_{ij} = \text{arg min}_{\bold{P \in SE\left(3\right)}} || \mathcal{W}^{\frac{1}{2}}\left(\bold{X}_{j}^{\leftrightarrow} - \bold{P}\bold{X}_{i}^{{\leftrightarrow}}\right)||$$
-![](./imgs/flowMapPose.png)
-
-#### Camera Focal Length as a Function of Depth and Optical Flow.
-1. Use multiple candidates $\bold{K}_{k}$
-2. Softly select among the 
-3. Compute the resulting intrinsics as $\bold{K} = \sum_{k} \omega_{k} \bold{K}_{k}$, $\omega_{k} = \frac{e^{-\mathcal{L}_k}}{\sum_{l}e^{-\mathcal{L}_l}}$
-
-## [Detector-Free Structure from Motion](https://zju3dv.github.io/DetectorFreeSfM/files/main_cvpr.pdf)
 
 ## [Global Structure-from-Motion Revisited](https://arxiv.org/pdf/2407.20219)
 
@@ -222,3 +189,195 @@ Let _match graph_ be the graph where the nodes are the images, and the edges bei
 Using a image as query, instead of retrieving only a document (image) from the db, using query expansion, also the topological neighborhood of that result is retrieved
 ![](./imgs/Rome/QueryExpansion.png)
 
+
+## [HSfM: Hybrid Structure-from-Motion](https://openaccess.thecvf.com/content_cvpr_2017/papers/Cui_HSfM_Hybrid_Structure-from-Motion_CVPR_2017_paper.pdf)
+
+
+## [Learning a Multi-View Stereo Machine](https://arxiv.org/pdf/1708.05375)
+## [DEEPV2D: VIDEO TO DEPTH WITH DIFFERENTIABLE STRUCTURE FROM MOTION](https://arxiv.org/pdf/1812.04605)
+## [BA-NET: DENSE BUNDLE ADJUSTMENT NETWORKS](https://arxiv.org/pdf/1806.04807)
+## [Multi-Scale Geometric Consistency Guided Multi-View Stereo](https://arxiv.org/pdf/1904.08103)
+
+## [DeepSFM: Structure From Motion Via Deep Bundle Adjustment](https://arxiv.org/pdf/1912.09697)
+![](./imgs/DeepSfM/architecture.png)
+
+> Our method does not require accurate pose, and a rough estimation is enough.
+> our network includes a depth based cost volume (D-CV) and a pose based cost volume (P-CV).
+> we also assume initial structures (i.e depth maps) and motions (i.e. camera poses) are given
+
+### Workflow
+#### 2d Feature Extraction
+#### Depth based Cost Volume (D-CV)
+> Inspired by the traditional plane sweep cost volumes, our D-CV is a concatenation of three components: the target image features, the warped source image features and the homogeneous depth consistency maps
+#### Pose based Cost Volume (P-CV)
+> Similar to D-CV, P-CV is also concatenated by three components: the target image features, the warped source image features and the homogeneous depth consistency maps.
+>  For rotation, we sample δR uniformly in the Euler angle space in a predefined range and multiply δR by the initial R. For translation, we sample δt uniformly and add δt to the initial t. In the end, a group of P virtual camera poses noted as {R ∗ ip|t ∗ ip} P p=1 around input pose are obtained for cost volume construction.
+#### Cost Aggregation and Regression
+#### Training
+> The DeepSFM learns the feature extractor, 3D convolution, and the regression layers in a supervised way
+
+
+## [FlowMap: High-Quality Camera Poses, Intrinsics, and Depth via Gradient Descent](https://arxiv.org/pdf/2404.15259)
+![](./imgs/FlowNetForward.png)
+### Supervision via Camera-Induced Scene Flow
+1. Unproject pixels $\bold{u}_i \in \mathbb{R}^2$ from image $I_{i}$ using depth map $D_{i}$ and intrinsic matrix $K_{i}^{-1}$, yielding a 3D point $x_{i}$
+2. Use relative camera pose $P{ij}$ between frames $i$ and $j$ to transform a point $x_{i}$ onto $x_{j}$, yielding an image an implied $\hat{\bold{u}}_{ij}$.
+3. Compare the computed correspondence $\hat{\bold{u}}_{ij}$ with a know correspondence $\bold{u}_{ij}$
+$$\mathcal{L} = ||\hat{\bold{u}}_{ij} - \bold{u}_{ij}||$$
+![](./imgs/FlowLoss.png)
+#### Supervision via Dense Optical Flow and Sparse Point Tracks
+> Use off-the-shelf point tracker
+1. Correspondences derived from two sources: frame by frame optical flow and sparse tracks.
+2. Correspondences flow optical flow $\bold{F}_{i}$: $\bold{u}_{ij} = \bold{u}_{i} + \bold{F}_{ij}\left[\bold{u}_{i}\right]$.
+
+### Parameterizing Depth, Pose, and Camera Intrinsics
+#### Depth Network.
+Use a pre-trained network that estimates depth
+#### Pose as a Function of Depth, Intrinsics and Optical Flow
+1. Unproject the pixels to create point clouds: $\bold{X}_{j}^{\leftrightarrow}$, $\bold{X}_{i}^{\leftrightarrow}$
+2. Use Procrustes formulation to solve the alignment. Use the flow correspondences
+
+$$\bold{P}_{ij} = \text{arg min}_{\bold{P \in SE\left(3\right)}} || \mathcal{W}^{\frac{1}{2}}\left(\bold{X}_{j}^{\leftrightarrow} - \bold{P}\bold{X}_{i}^{{\leftrightarrow}}\right)||$$
+![](./imgs/flowMapPose.png)
+
+#### Camera Focal Length as a Function of Depth and Optical Flow.
+1. Use multiple candidates $\bold{K}_{k}$
+2. Softly select among the 
+3. Compute the resulting intrinsics as $\bold{K} = \sum_{k} \omega_{k} \bold{K}_{k}$, $\omega_{k} = \frac{e^{-\mathcal{L}_k}}{\sum_{l}e^{-\mathcal{L}_l}}$
+
+## [DUSt3R: Geometric 3D Vision Made Easy](https://arxiv.org/pdf/2312.14132)
+![](./imgs/DUSt3R/Architecture.png)
+
+Let $\bold{X} \in \mathbb{R}^{\bold{W} \times \bold{H} \times 3}$ be a dense $\bold{2D}$ field of $\bold{3D}$ points. In association with its corresponding $\bold{RGB}$ image $I$ of resolution $W \times H$, $X$ forms one-to-one mapping between image pixels and 3D scene points $I_{i, j} \leftrightarrow X_{i, j}$, for all pixel coordinates $\left(i, j\right) \in \left\{1\ldots W \right\}\times\left\{1 \ldots H\right\}$
+Given camera intrinsics $K \in \mathbb{R} ^{3 \times 3}$, the pointman  $X$ of the observed scene can be obtained using the depthmap $D \in \mathbb{R}^{W \times H}$ as follows: $X_{ij} = K^{-1}\left[iD_{i, j}, jD_{i, j}, D_{i, j}\right]$. Let $X^{n,m}$ be the pointmap $X^{n}$ of image $n$ in camera m's coordinate frame:
+$$X^{n,m} = P_M \cdot P_n^{-1}h\left(X^n\right)$$
+with $P_m, P_n \in \mathbb{R}^{3 \times 4}$ world-to-camera poses for images $m$ and $m$, and $h: \left(x, y, z\right) \rightarrow \left(x, y, z, 1\right)$
+
+>To that aim, we train a network F that takes as input 2 RGB images $I_1,I_2 \in \mathbb{R}^{W \times H \times 3}$ and outputs 2 corresponding pointmaps $X^{1,1} , X^{2,1} \in \mathbb{R}^{W \times H \times 3}$ with associated confidence maps $C^{1,1}, C^{2,1} \in \mathbb{R}^{W \times H}$
+### Network architecture.
+
+> inspired by CroCo pretraining
+
+> Hence, pointmaps do not necessarily correspond to any physically plausible camera model.  Rather, we let the network learn all relevant priors present from the train set, which only contains geometrically consistent pointmaps. Using a generic architecture allows to leverage strong pretraining technique, ultimately surpassing what existing task-specific architectures can achieve. We detail the learning process in the next sect
+
+#### Training Objective
+* 3D Regression Loss between GT depthmaps and learned depthmaps
+* Confidence Loss
+
+### Downstream Applications
+1. Point Matching
+2. Recovering Intrinsics
+3. Relative Pose Estimation
+4. Absolute Pose Estimation
+
+### Global Alignment
+1. construct pair-wise scene graph $\mathcal{G} \left(\mathcal{V}, \mathcal{E}\right)$
+> Discussion. We point out that, contrary to traditional bundle adjustment, this global optimization is fast and simple to perform in practice. Indeed, we are not minimizing 2D reprojection errors, as bundle adjustment normally does, but 3D projection errors. The optimization is carried out using standard gradient descent and typically converges after a few hundred steps, requiring mere seconds on a standard GPU
+
+## [Grounding Image Matching in 3D with MASt3R](https://arxiv.org/pdf/2406.09756)
+
+
+* Similar to Dust3R, but it doesn't normalize the depth maps
+* In addition to DUSt3R, MASt3R adds a new matching head that outputs two dense feature maps $D^1 \text{ and } D^2 \in \mathbb{Rj}^{H \times W \times d}$
+  * $$D^{1} = \text{Head}^{1}_{desc}\left(\left[H^1, H^{`1}\right]\right) \\ D^{2} = \text{Head}^{2}_{desc}\left(\left[H^2, H^{`2}\right]\right)$$
+
+    * Where $$H^{1} = \text{Encoder}\left(I^1\right) \\ H^{2} = \text{Encoder}\left(I^2\right)$$
+    * 
+> Matching objective. We wish to encourage each local descriptor from one image to match with at most a single descriptor from the other image that represents the same 3D point in the scene.
+> Note that this matching objective is essentially a cross-entropy classification loss: contrary to regression in eq. (6), the network is only rewarded if it gets the correct pixel right, not a nearby pixel
+### Fast reciprocal matching
+* naive implementation of reciprocal matching has a high computational complexity of $O\left(W^2H^2\right)$
+    > We therefore propose a faster approach based on sub-sampling.
+
+* Coarse-to-fine matching
+
+### Experimental results
+#### Training
+* **Training Data** mixture of 14 datasets
+> Training. We base our model architecture on the public DUSt3R model and use the same backbone (ViTLarge encoder and ViT-Base decoder).
+
+#### Tasks
+1. Map-free localization
+2. Relative pose estimation - :TODO check some notable papers in this section
+3. Visual localization
+4. Multiview 3D reconstruction
+### Architecture
+![](./imgs/MASt3R/architecture.png)
+
+## [MASt3R-SfM: a Fully-Integrated Solution for Unconstrained Structure-from-Motion](https://arxiv.org/pdf/2409.19152)
+* **Good overview of the current approaches to Structure from Motion**
+* > Thanks to the robustness of MASt3R to outliers, the proposed method is able to completely get rid of RANSAC
+
+* > it works even when there is no motion
+
+### Contributions
+1. full-fledged Sfm pipeline able to process unconstrained image collections
+2. Exploit the encoder from [MASt3R](#grounding-image-matching-in-3d-with-mast3r) to perform large-scale image retrieval
+3. The entire SfM pipeline is training-free, provided off-the-self MASt3R checkpoint.
+
+#### Image Retrieval for SfM
+* performed in steps - one global, one local
+### Approach
+![](./imgs/MASt3R_SfM/architecture.png)
+
+#### Scene Graph
+1. Sparse scene graph
+   * $\mathcal{G} = \left(\mathcal{V}, \mathcal{E}\right)$ is a graph where each vertex $I \in \mathcal{V}$ is an image, and each edge $e=\left(n, m\right) \in \mathcal{E}$ is an undirected connection between two overlapping images $I^n$ and $I^m$
+2. Image Retrieval
+   * $h\left(I^n, I^m\right) \rightarrow s$, where $s \in \left[0, 1\right]$ is a co-visibility score between two images $I^n$ and $I^m$. MASt3R's encoder is used for this task. 
+     * ASMK (Aggregated Selective Match Kernels)
+3. Graph construction
+   * select fixed number of $N_a$ images (keyframes) using farthest point sampling base on similarity matrix $S$.
+#### Local Reconstruction
+1. **Canonical pointmaps**
+    * Let $\mathcal{E}^n = \left\{e \vert e \in \mathcal{E}  \wedge n \in e\right\}$ be the set of all edges connected to image $I^n$. For each edge $e \in \mathcal{E}^n$ there is a different estimate of $X^{n, n}$ and its respective confidence maps $C^{n,n}$, denoted as $X^{n, e} \text{ and } C^{n, e}$. The canonical pointmap is computes as:
+      * $$\tilde{X}^{n}_{i, j} = \frac{\sum_{e \in \mathcal{E}^{n}}C^{n, e}_{i, j}X^{x, e}_{i, j}}{\sum_{e \in \mathcal{E}^n}C^{n,e}_{i, j}}$$
+      * From it, the canonical depthmap and the focal length can be recovered using Weiszfeld algorithm
+
+2. Constrained pointmaps
+The 3D point $\chi^{n}_{i, j}$ seen at pixel $\left(i, j\right)$ of image $I^n$ is defined using inverse reprojection as $\chi^n_{i, j} = \pi^{-1}_n\left(\sigma_n, , K_n, P_n, Z^{n}_{i, j}\right) = \frac{1}{\sigma_n} P^{-1}_n \cdot K^{-1}_{n} \cdot Z^{n}_{i,j} \left[i, j, q\right]^{T}$ 
+![constrained poitmap](./imgs/MASt3R_SfM/constrained.png)
+
+3. Coarse alignment
+find $\sigma^{*}, P^{*}$ for every canonical pointmap $\chi$ such that any pair of matching 3D points gets as close as possible
+$$\sigma^*, P^*=\underset{\sigma, P}{\text{argmin}}\underset{c \in \mathcal{M}^{m, n}, \left(n, m\right) \in \mathcal{E}}{\sum} q_c \left\Vert \chi ^{n}_c - \chi^{m}_c\right\Vert^{\lambda_1}$$
+4. Refinement 
+Because there are depth ambiguities a second round of global optimization -similar to bundle adjustment - is applied
+  * We propose instead to form pseudo-tracks by creating anchor points and rigidly tying together every pixel with their closest anchor point
+## [Pixel-Perfect Structure-from-Motion with Featuremetric Refinement](https://arxiv.org/pdf/2108.08291.pdf)
+
+
+### Background
+1. global refinement
+2. Track refinement - improves keypoint location
+
+### Approach
+> refining geometry is an inherently local operation, which, we show, can efficiently benefit from locally-dense pixels.
+
+1. Featuremetric optimization
+    * Direct alignment
+    * Learned representation
+2. Keypoint adjustment
+    * Track separation
+    * Objective
+    * Efficiency
+    * Drift
+3. Bundle adjustment
+## [Detector-Free Structure from Motion](https://zju3dv.github.io/DetectorFreeSfM/files/main_cvpr.pdf)
+## [Scene Coordinate Reconstruction: Posing of Image Collections via Incremental Learning of a Relocalizer](https://arxiv.org/pdf/2404.14351)
+## [Visual Geometry Grounded Deep Structure From Motion](https://arxiv.org/pdf/2312.04563)
+## [Generalized Differentiable RANSAC](https://arxiv.org/pdf/2212.13185)
+## [FASTMAP: Revisiting Dense and Scalable Structure from Motion](https://arxiv.org/pdf/2505.04612v1)
+## [RoMo: Robust Motion Segmentation Improves Structure from Motion](https://arxiv.org/pdf/2411.18650v1)
+
+## [Multi-View Optimization of Local Feature Geometry ](https://arxiv.org/pdf/2003.08348)
+
+## [Semantic Texture for Robust Dense Tracking](https://arxiv.org/pdf/1708.08844)
+
+## [An Iterative Image Registration Technique with an Application to Stereo Vision](https://www.ri.cmu.edu/pub_files/pub3/lucas_bruce_d_1981_1/lucas_bruce_d_1981_1.pdf)
+
+## [NEURAL OUTLIER REJECTION FOR SELF-SUPERVISED KEYPOINT LEARNING](https://arxiv.org/pdf/1912.10615)
+
+## [CAP-Net: A Unified Network for 6D Pose and Size Estimation of Categorical Articulated Parts from a Single RGB-D Image](https://arxiv.org/pdf/2504.11230v2)
+
+## [Back to the Feature: Learning Robust Camera Localization from Pixels to Pose](https://arxiv.org/pdf/2103.09213)
