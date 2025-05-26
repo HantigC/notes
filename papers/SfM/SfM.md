@@ -330,7 +330,7 @@ with $P_m, P_n \in \mathbb{R}^{3 \times 4}$ world-to-camera poses for images $m$
    * select fixed number of $N_a$ images (keyframes) using farthest point sampling base on similarity matrix $S$.
 #### Local Reconstruction
 1. **Canonical pointmaps**
-    * Let $\mathcal{E}^n = \left\{e \vert e \in \mathcal{E}  \wedge n \in e\right\}$ be the set of all edges connected to image $I^n$. For each edge $e \in \mathcal{E}^n$ there is a different estimate of $X^{n, n}$ and its respective confidence maps $C^{n,n}$, denoted as $X^{n, e} \text{ and } C^{n, e}$. The canonical pointmap is computes as:
+    * Let $\mathcal{E}^n = \left\lbrace e \vert e \in \mathcal{E}  \wedge n \in e\right\rbrace$ be the set of all edges connected to image $I^n$. For each edge $e \in \mathcal{E}^n$ there is a different estimate of $X^{n, n}$ and its respective confidence maps $C^{n,n}$, denoted as $X^{n, e} \text{ and } C^{n, e}$. The canonical pointmap is computes as:
       * $$\tilde{X}^{n}_{i, j} = \frac{\sum_{e \in \mathcal{E}^{n}}C^{n, e}_{i, j}X^{x, e}_{i, j}}{\sum_{e \in \mathcal{E}^n}C^{n,e}_{i, j}}$$
       * From it, the canonical depthmap and the focal length can be recovered using Weiszfeld algorithm
 
