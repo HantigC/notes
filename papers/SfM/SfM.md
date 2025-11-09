@@ -353,16 +353,39 @@ Because there are depth ambiguities a second round of global optimization -simil
 
 ### Approach
 > refining geometry is an inherently local operation, which, we show, can efficiently benefit from locally-dense pixels.
+> While SfM typically discards image information as early as possible, we instead exploit it in several steps of the process thanks to direct alignment.
 
 1. Featuremetric optimization
     * Direct alignment
+      * Flow estimation
+        * > It naturally emerges from the direct optimization of the photometric error
+        * the flow can be made consistent across multiple views by jointly optimizing the cost over all pairs of observations
     * Learned representation
+      * the CNN features exhibit high invariance to illumination, etc.
+      * the same representation for keypoints and bundle adjustments
 2. Keypoint adjustment
     * Track separation
+      * a 3D point has a single projection on a given image plane, valid tracks cannot contain multiple keypoints detected in the same image
+      * use this property to prune most incorrect matches
     * Objective
+      * adjust the locations of 2D keypoints belonging to the same track $j$ by optimizing its featurementric consistency: $E^{j}_{\text{FKA}} = \underset{\left(u, v\right) \in \mathcal{M}\left(j\right)}{\sum} w_{uv} \left\Vert F_{i}\left(u\right)\left[p_u\right] - F_{i}\left(v\right)\left[p_v\right]\right\Vert_{\gamma}$, where $w_{uv}$ is the confidence of the correspondence $\left(u, v\right)$
     * Efficiency
     * Drift
+      * Due to the lack of geometric constrains the keypoints are allowed to drift everywhere
+      * It is crucial to limit drift
+      * For each track, the keypoints with the highest connectivity is frozen
 3. Bundle adjustment
+   * applied per tracks
+
+#### Implementation
+1. Dense extractor - S2DNet
+2. Optimization - the optimization problems of keypoints and bundle adjustments are solved using LM from Ceres. The keypoints are allowed to move at most K = 8 pixels. Feature lookup is implemented using bicubic interpolation
+    > To improve the convergence, we store and optimize its spatial derivatives
+
+#### Tasks
+1. 3D triangulation
+2. Camera pose estimation
+3. End-to-end SfM
 ## [Detector-Free Structure from Motion](https://zju3dv.github.io/DetectorFreeSfM/files/main_cvpr.pdf)
 ## [Scene Coordinate Reconstruction: Posing of Image Collections via Incremental Learning of a Relocalizer](https://arxiv.org/pdf/2404.14351)
 ## [Visual Geometry Grounded Deep Structure From Motion](https://arxiv.org/pdf/2312.04563)
