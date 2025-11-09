@@ -189,14 +189,19 @@ Let _match graph_ be the graph where the nodes are the images, and the edges bei
 Using a image as query, instead of retrieving only a document (image) from the db, using query expansion, also the topological neighborhood of that result is retrieved
 ![](./imgs/Rome/QueryExpansion.png)
 
-
+## [Discrete-Continuous Optimization for Large-Scale Structure from Motion](https://www.cs.cornell.edu/~snavely/publications/disco_cvpr11.pdf)
+## [Global Structure-from-Motion by Similarity Averaging](https://openaccess.thecvf.com/content_iccv_2015/papers/Cui_Global_Structure-From-Motion_by_ICCV_2015_paper.pdf)
+## [ Robust global translations with 1dsfm](https://www.cs.cornell.edu/projects/1dsfm/docs/1DSfM_ECCV14.pdf)
 ## [HSfM: Hybrid Structure-from-Motion](https://openaccess.thecvf.com/content_cvpr_2017/papers/Cui_HSfM_Hybrid_Structure-from-Motion_CVPR_2017_paper.pdf)
+
 
 
 ## [Learning a Multi-View Stereo Machine](https://arxiv.org/pdf/1708.05375)
 ## [DEEPV2D: VIDEO TO DEPTH WITH DIFFERENTIABLE STRUCTURE FROM MOTION](https://arxiv.org/pdf/1812.04605)
 ## [BA-NET: DENSE BUNDLE ADJUSTMENT NETWORKS](https://arxiv.org/pdf/1806.04807)
 ## [Multi-Scale Geometric Consistency Guided Multi-View Stereo](https://arxiv.org/pdf/1904.08103)
+
+
 
 ## [DeepSFM: Structure From Motion Via Deep Bundle Adjustment](https://arxiv.org/pdf/1912.09697)
 ![](./imgs/DeepSfM/architecture.png)
@@ -387,11 +392,143 @@ Because there are depth ambiguities a second round of global optimization -simil
 2. Camera pose estimation
 3. End-to-end SfM
 ## [Detector-Free Structure from Motion](https://zju3dv.github.io/DetectorFreeSfM/files/main_cvpr.pdf)
+> To solve the inconsistency issue of detector-free matching, our SfM framework reconstructs the scene in a coarse-tofine manner, which first builds a coarse SfM model with the quantized matches, and then iteratively refines the model towards higher accuracy
+
+![](./imgs/DetectorFreeSfM/pipeline.png)
+### Related Work
+1. Structure from Motion
+
+  > The framework eliminates the requirement of sparse feature detection at the beginning of the the pipeline, which makes it more robust for low texture scenarios
+2. Feature Matching
+3. Multi-View Refinement
+  > The technical challenge is that perview detection of feature points cannot guarantee their geometric consistency among multiple views.
+
+### Method
+Let $\left\lbrace I_i\right\rbrace$, the objective is to recover camera poses $\left\lbrace\xi_i \in \mathbb{SE}\left(3\right)\right\rbrace$, intrinsic parameters $\left\lbrace C_i\right\rbrace$ and the scene point cloud $\left\lbrace P_j\right\rbrace$. The approach use two two stage pipeline:
+1. establish correspondences between image pairs using detector-free matcher and reconstruct an initial coarse SfM
+2. Perform an iterative refinement to improve accuracy
+
+#### Detector-Free Matching and Coarse SfM
+First, there is a detector-free semi-dense feature matching between image pairs instead of first detecting sparse keypoints as in the traditional SfM pipeline.
+
+* Match Quantization
+  * discretize the dense features locations into a fixed grid: $\lfloor\frac{x}{r}\rceil \ast r$. This forces multiple keypoints to merge into a single keypoint.
+* After the quantization, utilize the matches to obtain a coarse SfM model
+> The accuracy of recovered camera poses and point clouds is limited due to match quantization, which serves as the initialization of our refinement framework introduced in the next section.
+
+#### Iterative SfM Refinement
+* first enhance the accuracy of the feature tracks
+* the refined feature tracks are then fed into a geometry refinement phase, which optimizes camera poses and point clouds jointly
+  > The refinement process can be performed multiple times for higher accuracy.
+
+1. Feature Track Refinement
+   * a feature track $ \mathcal{T}_j = \left\lbrace x_k \in \mathbb{R}^{2} \vert k = 1 \colon N_j\right\rbrace$ is a set of 2d keypoints locations in multi-view images corresponding to a 3D scene point $P_j$
+     1. extract a feature at the keypoint in the reference view
+     2. extract a grid of $p \times p$  of features withing every other views in the track
+     3. correlate the feature in the reference view with every other grid of features, at the end yielding a $N_j -1$  heatmaps of $p \times p$. This gives a candidate feature track with refined keypoint locations in all query views as well the uncertainty of this candidate track (the sum of variance over all the heatmaps)
+     4. To refine the location of the keypoint in the reference view, a $ w \times w$ grid is samples around the original keypoint. Then for every feature in the grid the same refinement is applied, the track with the smallest uncertainty is selected $\mathcal{T}_j^{*}$
+   * Reference view selection
+     * The view with the scale closest to the medium scale across the track is selected as the reference view, the others are used as query views 
+   * Multi-view Feature Transformer
+
+
+  ![](./imgs/DetectorFreeSfM/TrackRefinement.png)
+
+2. Training 
+   * The only module trained is the multi-view feature transformer
+     * it is train on MegaDepth using $\mathcal{l}_2$ loss at keypoint locations between the refined tracks and the ground-truth tracks
+  * training data 
+    * sampling image bags in each scene with a maximum of six images in each bag
+    * the image bags are sampled based on covisibility  provided scene SfM model.
+    * the gt feature tracks in each bag are built by randomly selecting a reference image and projecting its grid points to other views by depth maps
+
+
+#### Geometry Refinement
+Base on previously refined feature tracks $\left\lbrace\mathcal{T}^{*}_{j}\right\rbrace$, the geometry refinement pipeline iteratively refines the poses, intrinsics, point clouds, as well as the topology of the feature tracks
+
+* perform BA to optimize poses and points clouds based on the refined feature tracks.
+* After BA, a topology adjustment (TA) is performed, which benefits further BA and multi-view matching
+  * Adjust the topology by
+    * adding 2D keypoint tracks that previously failed to be registered into feature tracks
+    * merge tracks that can meet the reprojection criteria
+    * outlier filtering
+
 ## [Scene Coordinate Reconstruction: Posing of Image Collections via Incremental Learning of a Relocalizer](https://arxiv.org/pdf/2404.14351)
 ## [Visual Geometry Grounded Deep Structure From Motion](https://arxiv.org/pdf/2312.04563)
+### TLDR
+1. Supervised all trainable structure from motion
+2. differentiable BA
+
+
+### Architecture
+![](./imgs/VGGSfM/architecture.png)
+### Method
+> VGGSfM implements SfM via single function $f_{\theta}$
+
+* It accepts a set of images and it outputs the camera parameters $\mathcal{P}$ and the scene point cloud $X$
+* Every part of the pipeline is differentiable, making it learnable end-to-end
+  1. tracker
+  2. initial camera parameters
+  3. initial point cloud
+  4. bundle adjustment
+
+#### Tracking
+* uses a deep feed forward tracking function
+* input a set of images, the output a set of reliable point trajectories across all images
+* Architecture
+  * let $N_T$ query points in a frame $I_i$
+  * sample CNN base descriptors for every query point
+  * correlate the query points across all $N_I$ images at different spatial resolution - using the cost volume ofc
+  * flatten into tokens $V \in \mathbb{R}^{N_T \times N_I \times C}$, where the total numer of elements in the cost-volume pyramid
+  * Feed the tokens to a transformer, obtaining the tracks $\mathcal{T} = \left\lbrace T^j\right\rbrace_{j=1}^{N_T}$
+
+  > our tracker does not assume temporal continuity. Therefore, we avoid the sliding window approach and, instead, attend to all the input frames together.
+* Tracking confidence
+  * the tracker estimates the confidence for each track-point
+  * model predicts the variance $\sigma^j_i $ of the track
+  * the confidence is its inverse $\frac{1}{\sigma_i^j}$
+* Coarse-to-fine tracking
+  > As described above, we first coarsely track image points using feature maps that fully cover the input images I. Then, we form $P \times P$ patches by cropping input images around the coarse point estimates and execute the tracking again to obtain a sub-pixel estimate.
+
+#### Learnable camera & point initialization
+> Importantly, we register all cameras and reconstruct all scene points collectively in a non-incremental differentiable fashion.
+1. Learnable camera
+   * initial 8 point algorithm for pose estimation
+   * concatenates the poses with token computed by cross attention
+   * It results in initial poses $\hat{\mathcal{P}}$
+2. Learnable points
+  > The preliminary point cloud is formed via closed-form multi-view Direct Linear Transform (DLT) 3D triangulation
+   * uses the initial poses $\hat{\mathcal{P}}$
+   * uses a transformer as a triangulator
+
+#### Bundle Adjustment
+> Additionally, the error terms are filtered out if the corresponding points have low visibility, low confidence, or do not fit the geometric constraints defined by [SfM revisited](#structure-from-motion-revisited)
+* Differentiable Levenberg-Marquardt
+  * Theseus library 
+
+#### Camera parameterization
+8-degrees of freedom
+1. the rotation quaternion $q\left(R\right) \in \mathbb{R}^4$ of rotation $R \in \mathbb{SO}\left(3\right)$
+2. the translation $t \in \mathbb(R)^3$
+3. the logarithm of focal length $ln\left(f\right) \in \mathbb{R}$, $f \in \mathbb{R}^{+}$
+
+#### Training loss 
+1. loss between ground truth $3D$ points and the initial and BA-refined 3D points - Huber loss
+2. loss between ground truth pose points and the initial and BA-refined pose - Huber loss
+3. likelihood of a ground-truth track point 
+
+  
+
 ## [Generalized Differentiable RANSAC](https://arxiv.org/pdf/2212.13185)
+
 ## [FASTMAP: Revisiting Dense and Scalable Structure from Motion](https://arxiv.org/pdf/2505.04612v1)
 ## [RoMo: Robust Motion Segmentation Improves Structure from Motion](https://arxiv.org/pdf/2411.18650v1)
+## [DiffPoseNet: Direct Differentiable Camera Pose Estimation](https://openaccess.thecvf.com/content/CVPR2022/papers/Parameshwara_DiffPoseNet_Direct_Differentiable_Camera_Pose_Estimation_CVPR_2022_paper.pdf)
+## [SfM-Net: Learning of Structure and Motion from Video](https://arxiv.org/pdf/1704.07804)
+
+![](./imgs/SfMNet/architecture.png)
+## [RelPose: Predicting Probabilistic Relative Rotation for Single Objects in the Wild](https://arxiv.org/pdf/2208.05963)
+## [Unsupervised Learning of Depth and Ego-Motion from Vide](https://arxiv.org/pdf/1704.07813)
 
 ## [Multi-View Optimization of Local Feature Geometry ](https://arxiv.org/pdf/2003.08348)
 
