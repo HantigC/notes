@@ -524,7 +524,20 @@ Base on previously refined feature tracks $\left\lbrace\mathcal{T}^{*}_{j}\right
 ## [FASTMAP: Revisiting Dense and Scalable Structure from Motion](https://arxiv.org/pdf/2505.04612v1)
 ## [RoMo: Robust Motion Segmentation Improves Structure from Motion](https://arxiv.org/pdf/2411.18650v1)
 ## [DiffPoseNet: Direct Differentiable Camera Pose Estimation](https://openaccess.thecvf.com/content/CVPR2022/papers/Parameshwara_DiffPoseNet_Direct_Differentiable_Camera_Pose_Estimation_CVPR_2022_paper.pdf)
+
+### Architecture
+![](./imgs/DiffPoseNet/architecture.png)
+
+### Approach
+
+1. NFlowNet for Normal Flow Prediction
+  > The first step in motion analysis from video is to compute an image motion representation
+  * Encoder-decoder architecture
+  * trained in a supervised manner
+
+2. Self-Adaptive Pose Estimation from Normal Flow
 ## [SfM-Net: Learning of Structure and Motion from Video](https://arxiv.org/pdf/1704.07804)
+
 
 ### Learning SfM
 #### SfM-Net architecture
@@ -570,3 +583,4 @@ Given frames $I_t$ and $I_{t+1}$
 ## [CAP-Net: A Unified Network for 6D Pose and Size Estimation of Categorical Articulated Parts from a Single RGB-D Image](https://arxiv.org/pdf/2504.11230v2)
 
 ## [Back to the Feature: Learning Robust Camera Localization from Pixels to Pose](https://arxiv.org/pdf/2103.09213)
+## [UFM: A Simple Path towards Unified Dense Correspondence with Flow](https://www.arxiv.org/pdf/2506.09278)
