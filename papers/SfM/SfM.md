@@ -526,7 +526,36 @@ Base on previously refined feature tracks $\left\lbrace\mathcal{T}^{*}_{j}\right
 ## [DiffPoseNet: Direct Differentiable Camera Pose Estimation](https://openaccess.thecvf.com/content/CVPR2022/papers/Parameshwara_DiffPoseNet_Direct_Differentiable_Camera_Pose_Estimation_CVPR_2022_paper.pdf)
 ## [SfM-Net: Learning of Structure and Motion from Video](https://arxiv.org/pdf/1704.07804)
 
+### Learning SfM
+#### SfM-Net architecture
 ![](./imgs/SfMNet/architecture.png)
+
+Given frames $I_t$ and $I_{t+1}$
+  * predict frame depth $d_t \in \left[0, \infty \right)^{w \times h}$
+  * camera roatation and translation $\left\lbrace R_t^c,t_t^c \right\rbrace \in \mathbb{SE}\left(3\right)$
+  * a set of K motion masks $m_t^k \in \left[0,1\right]^{w \times h}$, $k \in 1, \dots ,K$ that denote membership of each pixel to $K$ corresponding rigid body motions $\left\lbrace R_t^k,t_t^k \right\rbrace \in \mathbb{SE}\left(3\right)$, $k \in \left\lbrace 1, \dots ,K\right\rbrace$
+> Using the above estimates, optical flow is computed by first generating the 3D point cloud corresponding to the image pixels using the depth map and camera intrinsics, transforming the point cloud based on camera and object rigid transformations, and back projecting the transformed 3D coordinates to the image plane. Then, given the optical flow field between initial and projected pixel coordinates, differentiable backward warping is used to map frame $I_{t+1}$ to $I_t$. 
+##### Depth and per-frame point clouds.
+* convolution/deconvolution 
+* RELU activation, since depth values are non-negative 
+* use depth to obtain the points cloud $X_t^i = \left(x_t^i, y_t^i, z_t^i\right)$
+
+##### Scene motion
+* convolution/deconvolution for camera motion and independently moving objects
+* > We depth-concatenate the pair of frames and use a series of convolutional layers to produce an embedding layer. We use two fully-connected layers to predict the motion of the camera between the frames and a predefined number K of rigid body motions that explain moving objects in the scene.
+* Euler angle representation of camera pose
+* the network predicts translation parameters as $t_c$ using feed forward network
+* another feed forward network predicts $\sin\alpha, \sin\beta, \sin \gamma$, constrained in the interval $\left[-1, 1\right]$ by a RELU and min function
+* The motion of the individual bodies uses the same parametrization
+* > While camera motion is a global transformation applied to all the pixels in the scene, the object motion transforms are weighted by the predicted membership probability of each pixel to each rigid motion. These masks are produced by feeding the embedding layer through a deconvolutional tower. We use sigmoid activations at the last layer instead of softmax in order to allow each pixel to belong to any number of rigid body motions
+
+##### Optical Flow
+> We obtain optical flow by first transforming the point cloud obtained in using the camera and object motion rigid body transformations followed by projecting the 3D point on to the image plane using the camera intrinsics.
+
+#### Supervision
+1. Self-supervised - 
+2. 
+
 ## [RelPose: Predicting Probabilistic Relative Rotation for Single Objects in the Wild](https://arxiv.org/pdf/2208.05963)
 ## [Unsupervised Learning of Depth and Ego-Motion from Vide](https://arxiv.org/pdf/1704.07813)
 
